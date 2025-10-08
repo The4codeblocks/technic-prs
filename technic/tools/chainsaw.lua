@@ -43,6 +43,10 @@ if minetest.get_modpath("trunks") then
 	end
 end
 
+if minetest.get_modpath("ethereal") then
+	timber_nodenames["ethereal:bamboo"] = true
+end
+
 local S = technic.getter
 
 -- Table for saving what was sawed down
@@ -173,7 +177,7 @@ technic.register_power_tool("technic:chainsaw", {
 			return
 		end
 
-		local charge = technic.get_RE_charge(itemstack)
+		local charge = technic.get_charge(itemstack)
 		if charge < chainsaw_charge_per_node then
 			return
 		end
@@ -188,14 +192,16 @@ technic.register_power_tool("technic:chainsaw", {
 		-- chainsaw will stop after digging a number of nodes
 		charge = chainsaw_dig(pointed_thing.under, charge)
 		if not technic.creative_mode then
-			technic.set_RE_charge(itemstack, charge)
+			technic.set_charge(itemstack, charge)
 		end
 		return itemstack
 	end,
 })
 
 local mesecons_button = minetest.get_modpath("mesecons_button")
-local trigger = mesecons_button and "mesecons_button:button_off" or "default:mese_crystal_fragment"
+local has_mcl = minetest.get_modpath("mcl_core")
+local trigger = has_mcl and mesecons_button and "mesecons_button:button_wood_off"
+	or mesecons_button and "mesecons_button:button_off" or "default:mese_crystal_fragment"
 
 minetest.register_craft({
 	output = "technic:chainsaw",

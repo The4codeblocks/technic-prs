@@ -62,32 +62,29 @@ function technic.swap_node(pos, name)
 	end
 end
 
-function technic.set_RE_charge(stack, charge)
+function technic.set_charge(stack, charge)
 	local wear_factor = stack:get_definition().technic_wear_factor
 	if wear_factor then
 		local wear = math.floor(charge * wear_factor + 0.5)
 		stack:set_wear(wear > 0 and 65536 - wear or 0)
-	else
-		minetest.log("error", "technic.set_RE_charge item not registered as power tool: "..stack:get_name())
 	end
 end
 
-function technic.get_RE_charge(stack)
+function technic.get_charge(stack)
 	local def = stack:get_definition()
 	if def.technic_wear_factor then
 		local wear = stack:get_wear()
 		return (wear > 0 and math.floor((65536 - wear) / def.technic_wear_factor + 0.5) or 0), def.technic_max_charge
 	end
-	minetest.log("warning", "technic.get_RE_charge item not registered as power tool: "..stack:get_name())
 	return 0, 0
 end
 
-function technic.use_RE_charge(stack, amount)
+function technic.use_charge(stack, amount)
 	if technic.creative_mode or amount <= 0 then
 		-- Do not check charge in creative mode or when trying to use zero amount
 		return true
 	end
-	local charge = technic.get_RE_charge(stack)
+	local charge = technic.get_charge(stack)
 	if charge < amount then
 		-- Not enough energy available
 		return false
@@ -101,13 +98,12 @@ function technic.use_RE_charge(stack, amount)
 	return true
 end
 
--- If the node is loaded, returns it.  If it isn't loaded, load it and return nil.
+-- If the node is loaded, returns it. If it isn't loaded, load it.
 function technic.get_or_load_node(pos)
 	local node = minetest.get_node_or_nil(pos)
 	if node then return node end
-	local vm = VoxelManip()
-	local _, _ = vm:read_from_map(pos, pos)
-	return nil
+	minetest.load_area(pos)
+	return minetest.get_node(pos)
 end
 
 technic.tube_inject_item = pipeworks.tube_inject_item or function(pos, start_pos, velocity, item)
@@ -275,4 +271,17 @@ function technic.can_insert_unique_stack(pos, node, incoming_stack, direction)
 		end
 	end
 	return technic.default_can_insert(pos, node, incoming_stack, direction)
+end
+
+function technic.process_recipe(recipe, inv)
+	local dst_copy = inv:get_list("dst")
+	for _,item in ipairs(recipe.output) do
+		if not inv:room_for_item("dst", ItemStack(item)) then
+			inv:set_list("dst", dst_copy)
+			return false
+		end
+		inv:add_item("dst", item)
+	end
+	inv:set_list("src", recipe.new_input)
+	return true
 end

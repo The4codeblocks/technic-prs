@@ -33,6 +33,7 @@ Carbon Steel Block=
 Stainless Steel Block=
 Brass Block=
 Wrought Iron=
+Blast-resistant Concrete Block=
 
 ###rubber.lua
 Rubber Tree Sapling=

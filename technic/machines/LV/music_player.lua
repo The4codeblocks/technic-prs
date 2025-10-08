@@ -2,14 +2,15 @@
 -- The player can play music. But it is high ampage!
 
 local S = technic.getter
+local mat = technic.materials
 
 minetest.register_alias("music_player", "technic:music_player")
 minetest.register_craft({
 	output = 'technic:music_player',
 	recipe = {
-		{'technic:chromium_ingot', 'default:diamond',        'technic:chromium_ingot'},
-		{'default:diamond',        'technic:machine_casing', 'default:diamond'},
-		{'default:mossycobble',    'technic:lv_cable',       'default:mossycobble'},
+		{'technic:chromium_ingot', mat.diamond, 'technic:chromium_ingot'},
+		{mat.diamond,        'technic:machine_casing', mat.diamond},
+		{mat.mossycobble,    'technic:lv_cable',       mat.mossycobble},
 	}
 })
 
@@ -50,7 +51,8 @@ local run = function(pos, node)
 			music_handle = nil
 		end
 	elseif eu_input >= demand then
-		meta:set_string("infotext", S("@1 Active", machine_name))
+		meta:set_string("infotext", S("@1 Active", machine_name) .. "\n" ..
+			S("Demand: @1", technic.EU_string(demand)))
 		if not music_handle then
 			music_handle = play_track(pos, current_track)
 		end
@@ -82,11 +84,9 @@ local function set_display(meta)
 			"button[0,3;1,1;track7;7]"..
 			"button[1,3;1,1;track8;8]"..
 			"button[2,3;1,1;track9;9]"..
-			"button[3,1;1,1;stop;Stop]"..
-			"label[0,4;"..minetest.formspec_escape(
-				meta:get_int("active") == 0 and
-					S("Stopped") or
-					S("Current track @1", meta:get_int("current_track"))).."]")
+			"button[3,1;1,1;stop;"..S("Stop").."]"..
+			"label[0,4;"..(meta:get_int("active") == 0 and S("Stopped") or
+					S("Current track: @1", meta:get_int("current_track"))).."]")
 end
 
 minetest.register_node("technic:music_player", {
@@ -94,9 +94,12 @@ minetest.register_node("technic:music_player", {
 	tiles = {"technic_music_player_top.png", "technic_machine_bottom.png", "technic_music_player_side.png",
 	         "technic_music_player_side.png", "technic_music_player_side.png", "technic_music_player_side.png"},
 	groups = {snappy=2, choppy=2, oddly_breakable_by_hand=2,
-		technic_machine=1, technic_lv=1},
+		technic_machine=1, technic_lv=1, axey = 2, handy=1},
+	is_ground_content = false,
+	_mcl_blast_resistance = 1,
+	_mcl_hardness = 0.8,
 	connect_sides = {"bottom"},
-	sounds = default.node_sound_wood_defaults(),
+	sounds = technic.sounds.node_sound_wood_defaults(),
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
 		meta:set_string("infotext", S("@1 Music Player", S("LV")))

@@ -2,13 +2,14 @@ local max_charge = {50000, 200000, 300000}
 local power_usage_per_node = {200, 500, 600}
 
 local S = technic.getter
+local mat = technic.materials
 
 minetest.register_craft({
 	output = 'technic:mining_drill',
 	recipe = {
-		{'default:tin_ingot',             'technic:diamond_drill_head', 'default:tin_ingot'},
+		{mat.tin_ingot,             'technic:diamond_drill_head', mat.tin_ingot},
 		{'technic:stainless_steel_ingot', 'basic_materials:motor',      'technic:stainless_steel_ingot'},
-		{'',                              'technic:red_energy_crystal', 'default:copper_ingot'},
+		{'',                              'technic:red_energy_crystal', mat.copper_ingot},
 	}
 })
 minetest.register_craft({
@@ -58,10 +59,10 @@ local function drill_dig_it0 (pos,player)
 	end
 	local node = minetest.get_node(pos)
 	if node.name == "air" or node.name == "ignore" then return end
-	if node.name == "default:lava_source" then return end
-	if node.name == "default:lava_flowing" then return end
-	if node.name == "default:water_source" then minetest.remove_node(pos) return end
-	if node.name == "default:water_flowing" then minetest.remove_node(pos) return end
+	if node.name == mat.lava_source then return end
+	if node.name == mat.lava_flowing then return end
+	if node.name == mat.water_source then minetest.remove_node(pos) return end
+	if node.name == mat.water_flowing then minetest.remove_node(pos) return end
 	local def = minetest.registered_nodes[node.name]
 	if not def then return end
 	def.on_dig(pos, node, player)
@@ -283,7 +284,7 @@ local function mining_drill_mk2_handler(itemstack, user, pointed_thing)
 		return
 	end
 	local charge_to_take = cost_to_use(2, mode)
-	if technic.use_RE_charge(itemstack, charge_to_take) then
+	if technic.use_charge(itemstack, charge_to_take) then
 		local pos = minetest.get_pointed_thing_position(pointed_thing, false)
 		drill_dig_it(pos, user, mode)
 	end
@@ -301,7 +302,7 @@ local function mining_drill_mk3_handler(itemstack, user, pointed_thing)
 		return
 	end
 	local charge_to_take = cost_to_use(3, mode)
-	if technic.use_RE_charge(itemstack, charge_to_take) then
+	if technic.use_charge(itemstack, charge_to_take) then
 		local pos = minetest.get_pointed_thing_position(pointed_thing, false)
 		drill_dig_it(pos, user, mode)
 	end
@@ -318,7 +319,7 @@ technic.register_power_tool("technic:mining_drill", {
 			return itemstack
 		end
 		local charge_to_take = cost_to_use(1, 1)
-		if technic.use_RE_charge(itemstack, charge_to_take) then
+		if technic.use_charge(itemstack, charge_to_take) then
 			local pos = minetest.get_pointed_thing_position(pointed_thing, false)
 			drill_dig_it(pos, user, 1)
 		end

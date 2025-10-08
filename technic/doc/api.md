@@ -27,7 +27,11 @@ Helper functions
 	* Tells whether the node `nodename` is the cable of the tier `tier`.
 * `technic.get_cable_tier(nodename)`
 	* Returns the tier of the cable `nodename` or `nil`.
-* `technic.trace_node_ray(pos, dir, range)`
+* `technic.register_cable_tier(nodename, tier)`
+	* Register user defined cable to list of known tier cables.
+	* `nodename`: string, name of the node
+	* `tier`: string, tier name
+ * `technic.trace_node_ray(pos, dir, range)`
 	* Returns an iteration function (usable in the for loop) to iterate over the
 	  node positions along the specified ray.
 	* The returned positions will not include the starting position `pos`.
@@ -59,18 +63,18 @@ Power tool API
 		* `technic_get_charge = function(itemstack) ...`:
 			* Callback will be used to get itemstack charge and max\_charge.
 			* Have to return values `charge, max_charge`.
-			* Etc. `local charge, maxcharge = itemdef.technic_get_charge(itemstack)`.
-			* Defaults to `technic.get_RE_charge` which handles tool wear and charge values.
+			* E.g. `local charge, maxcharge = itemdef.technic_get_charge(itemstack)`.
+			* Defaults to `technic.get_charge` which handles tool wear and charge values.
 		* `technic_set_charge = function(itemstack, charge) ...`:
 			* Callback will be used to set itemstack charge.
-			* Defaults to `technic.set_RE_charge` which handles tool wear and charge values.
-* `technic.get_RE_charge(itemstack)`
+			* Defaults to `technic.set_charge` which handles tool wear and charge values.
+* `technic.get_charge(itemstack)`
 	* Returns current charge level of tool.
 	* For tool charger mods it is recommended to use `<tooldef>.technic_get_charge(stack)` instead.
-* `technic.set_RE_charge(itemstack, charge)`
+* `technic.set_charge(itemstack, charge)`
 	* Sets tool charge level.
 	* For tool charger mods it is recommended to use `<tooldef>.technic_set_charge(stack, charge)` instead.
-* `technic.use_RE_charge(itemstack, charge)`
+* `technic.use_charge(itemstack, charge)`
 	* Attempt to use charge and return `true`/`false` indicating success.
 	* Always succeeds without checking charge level if creative is enabled.
 
@@ -153,7 +157,7 @@ There are currently following types:
 Switching Station
 -----------------
 The switching station is required to start electric network and keep it running.
-Unlike in original mod this node does not handle power distribution logic but instead just resets network timeout.
+Unlike in original mod this node does not handle power distribution logic but instead just resets network timeout. The polyfuse system is activated when there is too much lag, which causes network to skip cycles (it works slower). It is shown in the infotext when activated.
 
 Network logic
 -----------------
@@ -169,6 +173,8 @@ If total demand is less than the available power they are all updated with the d
 If any surplus exists from the PR nodes the batteries will be charged evenly with excess power.
 If total demand exceeds generator supply then draw difference from batteries.
 If total demand is more than available power all RE nodes will be shut down.
+
+You can only have one network per machine, else the switching station will indicate you that several networks are trying to access the machine.
 
 ### Node meta usage
 Nodes connected to the network will have one or more of these parameters as meta data:

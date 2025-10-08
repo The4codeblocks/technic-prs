@@ -35,6 +35,7 @@ function technic_cnc.register_program(recipeitem, suffix, model, groups, images,
 		use_texture_alpha = ALPHA_CLIP,
 		walkable      = true,
 		groups        = groups,
+		is_ground_content = false,
 		selection_box = sbox,
 		collision_box = cbox
 	})
@@ -382,6 +383,11 @@ function technic_cnc.register_cnc_machine(nodename, def)
 		groups.tubedevice_receiver = 1
 	end
 
+	-- Only do logging when technic is enabled to avoid duplicating code
+	local on_metadata_inventory_move = technic_cnc.use_technic and technic.machine_on_inventory_move or nil
+	local on_metadata_inventory_put  = technic_cnc.use_technic and technic.machine_on_inventory_put or nil
+	local on_metadata_inventory_take = technic_cnc.use_technic and technic.machine_on_inventory_take or nil
+
 	-- Inactive state CNC machine
 	minetest.register_node(":" .. nodename, {
 		description = def.description,
@@ -390,6 +396,7 @@ function technic_cnc.register_cnc_machine(nodename, def)
 		connect_sides = {"bottom", "back", "left", "right"},
 		paramtype2  = "facedir",
 		legacy_facedir_simple = true,
+		is_ground_content = false,
 		on_construct = function(pos)
 			local meta = minetest.get_meta(pos)
 			meta:set_string("infotext", def.description)
@@ -410,6 +417,9 @@ function technic_cnc.register_cnc_machine(nodename, def)
 		allow_metadata_inventory_put = def.allow_metadata_inventory_put or allow_metadata_inventory_put,
 		allow_metadata_inventory_take = def.allow_metadata_inventory_take or allow_metadata_inventory_take,
 		allow_metadata_inventory_move = def.allow_metadata_inventory_move or allow_metadata_inventory_move,
+		on_metadata_inventory_move = on_metadata_inventory_move,
+		on_metadata_inventory_put = on_metadata_inventory_put,
+		on_metadata_inventory_take = on_metadata_inventory_take,
 		on_receive_fields = on_receive_fields,
 		technic_run = def.technic_run or technic_run,
 	})
@@ -426,6 +436,7 @@ function technic_cnc.register_cnc_machine(nodename, def)
 			paramtype2 = "facedir",
 			drop = nodename,
 			legacy_facedir_simple = true,
+			is_ground_content = false,
 			after_dig_node = def.after_dig_node or after_dig_node,
 			tube = def.tube,
 			digilines = def.digilines,
@@ -433,6 +444,9 @@ function technic_cnc.register_cnc_machine(nodename, def)
 			allow_metadata_inventory_put = def.allow_metadata_inventory_put or allow_metadata_inventory_put,
 			allow_metadata_inventory_take = def.allow_metadata_inventory_take or allow_metadata_inventory_take,
 			allow_metadata_inventory_move = def.allow_metadata_inventory_move or allow_metadata_inventory_move,
+			on_metadata_inventory_move = on_metadata_inventory_move,
+			on_metadata_inventory_put = on_metadata_inventory_put,
+			on_metadata_inventory_take = on_metadata_inventory_take,
 			on_receive_fields = on_receive_fields,
 			technic_run = def.technic_run or technic_run,
 			technic_disabled_machine_name = nodename,

@@ -14,12 +14,14 @@ local S = technic.getter
 
 local cable_entry = "^technic_cable_connection_overlay.png"
 
+local mat = technic.materials
+
 minetest.register_craft({
 	output = "technic:forcefield_emitter_off",
 	recipe = {
-		{"default:mese",         "basic_materials:motor",          "default:mese"        },
+		{mat.mese,         "basic_materials:motor",          mat.mese        },
 		{"technic:deployer_off", "technic:machine_casing", "technic:deployer_off"},
-		{"default:mese",         "technic:hv_cable",       "default:mese"        },
+		{mat.mese,         "technic:hv_cable",       mat.mese        },
 	}
 })
 
@@ -100,12 +102,12 @@ local function set_forcefield_formspec(meta)
 	local formspec
 	if digilines_path then
 		formspec = "size[5,3.25]"..
-			"field[0.3,3;5,1;channel;Digiline Channel;"..meta:get_string("channel").."]"
+			"field[0.3,3;5,1;channel;"..S("Digiline Channel")..";${channel}]"
 	else
 		formspec = "size[5,2.25]"
 	end
 	formspec = formspec..
-		"field[0.3,0.5;2,1;range;"..S("Range")..";"..meta:get_int("range").."]"
+		"field[0.3,0.5;2,1;range;"..S("Range")..";${range}]"
 	-- The names for these toggle buttons are explicit about which
 	-- state they'll switch to, so that multiple presses (arising
 	-- from the ambiguity between lag and a missed press) only make
@@ -133,7 +135,7 @@ end
 local forcefield_receive_fields = function(pos, formname, fields, sender)
 	local player_name = sender:get_player_name()
 	if minetest.is_protected(pos, player_name) then
-		minetest.chat_send_player(player_name, "You are not allowed to edit this!")
+		minetest.chat_send_player(player_name, S("You are not allowed to edit this!"))
 		minetest.record_protection_violation(pos, player_name)
 		return
 	end
@@ -290,7 +292,8 @@ local function run(pos, node)
 	elseif eu_input >= power_requirement then
 		if node.name == "technic:forcefield_emitter_off" then
 			technic.swap_node(pos, "technic:forcefield_emitter_on")
-			meta:set_string("infotext", S("@1 Active", machine_name))
+			meta:set_string("infotext", S("@1 Active", machine_name) .. "\n" ..
+			S("Demand: @1", technic.EU_string(power_requirement)))
 		end
 		update_forcefield(pos, meta, true)
 	end
@@ -306,7 +309,10 @@ minetest.register_node("technic:forcefield_emitter_off", {
 		"technic_forcefield_emitter_off.png",
 		"technic_forcefield_emitter_off.png"
 	},
-	groups = {cracky = 1, technic_machine = 1, technic_hv = 1},
+	groups = {cracky = 1, technic_machine = 1, technic_hv = 1, pickaxey = 3},
+	is_ground_content = false,
+	_mcl_blast_resistance = 1,
+	_mcl_hardness = 0.8,
 	on_receive_fields = forcefield_receive_fields,
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
@@ -338,7 +344,10 @@ minetest.register_node("technic:forcefield_emitter_on", {
 		"technic_forcefield_emitter_on.png"
 	},
 	groups = {cracky = 1, technic_machine = 1, technic_hv = 1,
-			not_in_creative_inventory=1},
+		  not_in_creative_inventory=1, pickaxey = 3},
+	is_ground_content = false,
+	_mcl_blast_resistance = 1,
+	_mcl_hardness = 0.8,
 	drop = "technic:forcefield_emitter_off",
 	on_receive_fields = forcefield_receive_fields,
 	on_destruct = function(pos)
@@ -364,8 +373,9 @@ minetest.register_node("technic:forcefield", {
 	sunlight_propagates = true,
 	drawtype = "glasslike",
 	groups = {not_in_creative_inventory=1},
+	is_ground_content = false,
 	paramtype = "light",
-	light_source = default.LIGHT_MAX,
+	light_source = minetest.LIGHT_MAX,
 	diggable = false,
 	drop = '',
 	tiles = {{

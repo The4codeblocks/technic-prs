@@ -1,7 +1,10 @@
 
 local S = technic.getter
 
-technic.register_recipe_type("extracting", { description = S("Extracting") })
+technic.register_recipe_type("extracting", {
+	description = S("Extracting"),
+	icon = "technic_mv_extractor_front.png",
+})
 
 function technic.register_extractor_recipe(data)
 	data.time = data.time or 4
@@ -131,3 +134,6 @@ if minetest.get_modpath("dye") then
 		})
 	end
 end
+
+-- [extract]or recipe for oil [extract]
+technic.register_extractor_recipe({input = {"group:leaves 1"}, output = "basic_materials:oil_extract 1"})

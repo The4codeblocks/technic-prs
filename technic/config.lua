@@ -12,18 +12,15 @@ local defaults = {
 	enable_sonic_screwdriver = "true",
 	enable_tree_tap = "true",
 	enable_vacuum = "true",
-	enable_wrench_crafting = "false",
 
 	-- Power tool options
 	multimeter_remote_start_ttl = "300",
 
 	-- Machine options
 	enable_wind_mill = "false",
-	enable_frames = "false",
 	enable_nuclear_reactor_digiline_selfdestruct = "false",
-	quarry_dig_above_nodes = "3",
 	quarry_max_depth = "100",
-	quarry_time_limit = "5000",
+	quarry_time_limit = "3000",
 	quarry_dig_particles = "false",
 
 	-- Power network and general options

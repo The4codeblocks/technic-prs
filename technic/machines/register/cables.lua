@@ -9,6 +9,13 @@ function technic.get_cable_tier(nodename)
 	return cable_tier[nodename]
 end
 
+function technic.register_cable_tier(name, tier)
+	assert(technic.machines[tier], "Tier does not exist")
+	assert(type(name) == "string", "Invalid node name")
+
+	cable_tier[name] = tier
+end
+
 local function item_place_override_node(itemstack, placer, pointed, node)
 	-- Call the default on_place function with a fake itemstack
 	local temp_itemstack = ItemStack(itemstack)
@@ -44,10 +51,14 @@ local function cable_defaults(nodename, data)
 		snappy = 2,
 		choppy = 2,
 		oddly_breakable_by_hand = 2,
+		swordy = 1,
+		axey = 1,
+		handy = 1,
 		["technic_"..ltier.."_cable"] = 1
 	}
+	def.is_ground_content = false
 	def.drop = def.drop or nodename
-	def.sounds = def.sounds or default.node_sound_wood_defaults()
+	def.sounds = def.sounds or technic.sounds.node_sound_wood_defaults()
 	def.on_construct = def.on_construct or function(pos) place_network_node(pos, {tier}, nodename) end
 	def.on_destruct = def.on_destruct or function(pos) remove_network_node(pos, {tier}, nodename) end
 	def.paramtype = def.paramtype or "light"
@@ -85,13 +96,20 @@ function technic.register_cable_plate(nodename, data)
 		def.node_box["connect_"..notconnects[i]] = nil
 		if i == 1 then
 			def.on_place = function(itemstack, placer, pointed_thing)
-				local pointed_thing_diff = vector.subtract(pointed_thing.above, pointed_thing.under)
+				local count = 0
+				for axis in pairs(xyz) do
+					count = count + (pointed_thing.under[axis] == pointed_thing.above[axis] and 0 or 1)
+					if count > 1 then
+						return itemstack
+					end
+				end
+				local pointed_thing_diff = vector.direction(pointed_thing.under, pointed_thing.above)
 				local index = pointed_thing_diff.x + (pointed_thing_diff.y*2) + (pointed_thing_diff.z*3)
 				local num = index < 0 and -index + 3 or index
 				local crtl = placer:get_player_control()
 				if (crtl.aux1 or crtl.sneak) and not (crtl.aux1 and crtl.sneak) and index ~= 0 then
 					local fine_pointed = minetest.pointed_thing_to_face_pos(placer, pointed_thing)
-					fine_pointed = vector.subtract(fine_pointed, pointed_thing.above)
+					fine_pointed = vector.direction(pointed_thing.above,fine_pointed)
 					fine_pointed[xyz[index < 0 and -index or index]] = nil
 					local key_a, a = next(fine_pointed)
 					local key_b, b = next(fine_pointed, key_a)
@@ -116,6 +134,8 @@ function technic.register_cable_plate(nodename, data)
 			end
 		else
 			def.groups.not_in_creative_inventory = 1
+			def._mcl_blast_resistance = 1
+			def._mcl_hardness = 0.8
 		end
 		def.on_rotate = function(pos, node, user, mode, new_param2)
 			-- mode 1 is left-click, mode 2 is right-click
@@ -135,6 +155,8 @@ function technic.register_cable(nodename, data)
 	def.tiles = def.tiles or {texture_basename..".png"}
 	def.inventory_image = def.inventory_image or def.inventory_image ~= false and texture_basename.."_wield.png" or nil
 	def.wield_image = def.wield_image or def.wield_image ~= false and texture_basename.."_wield.png" or nil
+	def._mcl_blast_resistance = 1
+	def._mcl_hardness = 0.8
 	minetest.register_node(nodename, def)
 	cable_tier[nodename] = def.tier
 end

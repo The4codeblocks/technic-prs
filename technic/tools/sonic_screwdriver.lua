@@ -1,6 +1,7 @@
 local sonic_screwdriver_max_charge = 15000
 
 local S = technic.getter
+local mat = technic.materials
 
 -- screwdriver handler code reused from minetest/minetest_game screwdriver @a9ac480
 local ROTATE_FACE = 1
@@ -29,9 +30,9 @@ local function screwdriver_handler(itemstack, user, pointed_thing, mode)
 
 	local node = minetest.get_node(pos)
 	local ndef = minetest.registered_nodes[node.name]
-	if not ndef or not ndef.paramtype2 == "facedir" or
+	if not ndef or ndef.paramtype2 ~= "facedir" or
 			(ndef.drawtype == "nodebox" and
-			not ndef.node_box.type == "fixed") or
+			ndef.node_box.type ~= "fixed") or
 			node.param2 == nil then
 		return
 	end
@@ -39,11 +40,11 @@ local function screwdriver_handler(itemstack, user, pointed_thing, mode)
 	-- contrary to the default screwdriver, do not check for can_dig, to allow rotating machines with CLU's in them
 	-- this is consistent with the previous sonic screwdriver
 
-	if not technic.use_RE_charge(itemstack, 100) then
+	if not technic.use_charge(itemstack, 100) then
 		return
 	end
 
-	minetest.sound_play("technic_sonic_screwdriver", {pos = pos, gain = 0.3, max_hear_distance = 10}, true)
+	minetest.sound_play("technic_sonic_screwdriver", {pos = pos, gain = 0.5, max_hear_distance = 10}, true)
 
 	-- Set param2
 	local rotationPart = node.param2 % 32 -- get first 4 bits
@@ -78,8 +79,8 @@ technic.register_power_tool("technic:sonic_screwdriver", {
 minetest.register_craft({
 	output = "technic:sonic_screwdriver",
 	recipe = {
-		{"",                         "default:diamond",        ""},
+		{"",                         mat.diamond,        ""},
 		{"mesecons_materials:fiber", "technic:battery",        "mesecons_materials:fiber"},
-		{"mesecons_materials:fiber", "moreores:mithril_ingot", "mesecons_materials:fiber"}
+		{"mesecons_materials:fiber", mat.mithril_ingot, "mesecons_materials:fiber"}
 	}
 })

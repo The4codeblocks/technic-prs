@@ -4,14 +4,16 @@ local mesecons_path = minetest.get_modpath("mesecons")
 local digilines_path = minetest.get_modpath("digilines")
 
 local S = technic.getter
+local mat = technic.materials
 
 local cable_entry = "^technic_cable_connection_overlay.png"
+local no_network_infotext = S("@1 Has No Network", S("Switching Station"))
 
 minetest.register_craft({
 	output = "technic:switching_station",
 	recipe = {
 		{"",                     "technic:lv_transformer", ""},
-		{"default:copper_ingot", "technic:machine_casing", "default:copper_ingot"},
+		{mat.copper_ingot, "technic:machine_casing", mat.copper_ingot},
 		{"technic:lv_cable",     "technic:lv_cable",       "technic:lv_cable"}
 	}
 })
@@ -20,7 +22,7 @@ local function start_network(pos)
 	local tier = technic.sw_pos2tier(pos)
 	if not tier then
 		local meta = minetest.get_meta(pos)
-		meta:set_string("infotext", S("@1 Has No Network", S("Switching Station")))
+		meta:set_string("infotext", no_network_infotext)
 	else
 		local network_id = technic.sw_pos2network(pos) or technic.create_network(pos)
 		local network = network_id and technic.networks[network_id]
@@ -46,13 +48,16 @@ minetest.register_node("technic:switching_station",{
 		"technic_water_mill_top_active.png",
 		"technic_water_mill_top_active.png",
 		"technic_water_mill_top_active.png"},
-	groups = {snappy=2, choppy=2, oddly_breakable_by_hand=2, technic_all_tiers=1},
+	groups = {snappy=2, choppy=2, oddly_breakable_by_hand=2, technic_all_tiers=1, axey=2, handy=1},
+	is_ground_content = false,
+	_mcl_blast_resistance = 1,
+	_mcl_hardness = 0.8,
 	connect_sides = {"bottom"},
-	sounds = default.node_sound_wood_defaults(),
+	sounds = technic.sounds.node_sound_wood_defaults(),
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
 		meta:set_string("infotext", S("Switching Station"))
-		meta:set_string("formspec", "field[channel;Channel;${channel}]")
+		meta:set_string("formspec", "field[channel;"..S("Digiline Channel")..";${channel}]")
 		start_network(pos)
 
 		-- start nodetimer
@@ -112,7 +117,7 @@ minetest.register_node("technic:switching_station",{
 					end
 				end
 			end
-			meta:set_string("infotext", infotext)
+			meta:set_string("infotext", infotext or no_network_infotext)
 		else
 			-- Network does not exist yet, attempt to create new network here
 			start_network(pos)

@@ -1,19 +1,25 @@
--- Minetest 0.4.7 mod: technic
--- namespace: technic
--- (c) 2012-2013 by RealBadAngel <mk@realbadangel.pl>
-
-local load_start = os.clock()
 
 technic = rawget(_G, "technic") or {}
+
 technic.plus = true
+technic.version = 1.2
+
+if minetest.get_modpath("mcl_sounds") then
+	technic.sounds = mcl_sounds
+else
+	technic.sounds = assert(default, "No suitable mod found for sounds")
+end
+
 technic.creative_mode = minetest.settings:get_bool("creative_mode")
 
 local modpath = minetest.get_modpath("technic")
 technic.modpath = modpath
 
+local S = minetest.get_translator("technic")
+technic.getter = S
 
-technic.getter = minetest.get_translator(minetest.get_current_modname())
-local S = technic.getter
+-- Read materials file
+dofile(modpath.."/materials.lua")
 
 -- Read configuration file
 dofile(modpath.."/config.lua")
@@ -45,16 +51,12 @@ dofile(modpath.."/machines/init.lua")
 -- Tools
 dofile(modpath.."/tools/init.lua")
 
--- Aliases for legacy node/item names
-dofile(modpath.."/legacy.lua")
-
--- visual effects
+-- Visual effects
 dofile(modpath.."/effects.lua")
 
-if minetest.settings:get_bool("log_mods") then
-	print(S("[Technic] Loaded in @1 seconds", os.clock() - load_start))
-end
+-- Chat commands
+dofile(modpath.."/chatcommands.lua")
 
-if minetest.get_modpath("mtt") then
-	dofile(modpath.."/integration_test.lua")
+if minetest.get_modpath("mtt") and mtt.enabled then
+	dofile(modpath.."/mtt.lua")
 end

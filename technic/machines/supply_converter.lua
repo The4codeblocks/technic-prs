@@ -15,10 +15,10 @@ local cable_entry = "^technic_cable_connection_overlay.png"
 
 local function set_supply_converter_formspec(meta)
 	local formspec = "size[5,2.25]"..
-		"field[0.3,0.5;2,1;power;"..S("Input Power")..";"..meta:get_int("power").."]"
+		"field[0.3,0.5;2,1;power;"..S("Input Power")..";${power}]"
 	if digilines_path then
 		formspec = formspec..
-			"field[2.3,0.5;3,1;channel;Digiline Channel;"..meta:get_string("channel").."]"
+			"field[2.3,0.5;3,1;channel;"..S("Digiline Channel")..";${channel}]"
 	end
 	-- The names for these toggle buttons are explicit about which
 	-- state they'll switch to, so that multiple presses (arising
@@ -181,9 +181,12 @@ minetest.register_node("technic:supply_converter", {
 		"technic_supply_converter_side.png"
 		},
 	groups = {snappy=2, choppy=2, oddly_breakable_by_hand=2,
-		technic_machine=1, technic_all_tiers=1},
+		technic_machine=1, technic_all_tiers=1, axey=2, handy=1},
+	is_ground_content = false,
+	_mcl_blast_resistance = 1,
+	_mcl_hardness = 0.8,
 	connect_sides = {"top", "bottom"},
-	sounds = default.node_sound_wood_defaults(),
+	sounds = technic.sounds.node_sound_wood_defaults(),
 	on_receive_fields = supply_converter_receive_fields,
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)

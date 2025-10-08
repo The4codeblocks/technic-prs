@@ -15,7 +15,7 @@ _G.technic = {}
 _G.technic.S = string.format
 _G.technic.modpath = "."
 _G.technic.getter = function(...) return "" end
-_G.technic.get_or_load_node = minetest.get_node
+_G.technic.get_or_load_node = core.get_node
 _G.technic.digilines = {
 	rules = {
 		-- digilines.rules.default
@@ -29,8 +29,12 @@ _G.technic.digilines = {
 		{x =  0, y = -1, z = 0}, -- along y below
 	}
 }
+_G.technic.sounds = setmetatable({}, {
+	__index = function(...) return function(...) return "" end end,
+})
 
 sourcefile("config")
+sourcefile("materials")
 sourcefile("register")
 technic.register_tier("LV", "Busted LV")
 technic.register_tier("MV", "Busted MV")

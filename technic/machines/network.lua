@@ -78,12 +78,12 @@ function technic.activate_network(network_id, timeout)
 	end
 end
 
-function technic.sw_pos2tier(pos, use_vm)
+function technic.sw_pos2tier(pos, load_node)
 	-- Get cable tier for switching station or nil if no cable
-	-- use_vm true to use VoxelManip to load node
+	-- load_node true to use minetest.load_area to load node
 	local cable_pos = {x=pos.x,y=pos.y-1,z=pos.z}
-	if use_vm then
-		technic.get_or_load_node(cable_pos)
+	if load_node then
+		minetest.load_area(cable_pos)
 	end
 	return technic.get_cable_tier(minetest.get_node(cable_pos).name)
 end
@@ -151,9 +151,8 @@ function technic.network_infotext(network_id, text)
 			local count = 0
 			for _ in pairs(network.all_nodes) do count = count + 1 end
 			return S("Building Network: @1 Nodes", count)
-		else
-			return network.infotext
 		end
+		return network.infotext
 	end
 end
 
@@ -415,8 +414,7 @@ end
 
 -- Generic function to add found connected nodes to the right classification array
 local function add_network_node(network, pos, machines)
-	technic.get_or_load_node(pos)
-	local name = minetest.get_node(pos).name
+	local name = technic.get_or_load_node(pos).name
 
 	if technic.get_cable_tier(name) == network.tier then
 		add_cable_node(pos, network)
@@ -590,11 +588,11 @@ minetest.register_on_mods_loaded(function()
 	end
 end)
 
-local function run_nodes(list, vm, run_stage, network)
+local function run_nodes(list, run_stage, network)
 	for _, pos in ipairs(list) do
 		local node = minetest.get_node_or_nil(pos)
 		if not node then
-			vm:read_from_map(pos, pos)
+			minetest.load_area(pos, pos)
 			node = minetest.get_node_or_nil(pos)
 		end
 		if node and node.name and node_technic_run[node.name] then
@@ -636,10 +634,9 @@ function technic.network_run(network_id)
 	network.BA_count_active = 0
 	network.BA_charge_active = 0
 
-	local vm = VoxelManip()
-	run_nodes(PR_nodes, vm, technic.producer, network)
-	run_nodes(RE_nodes, vm, technic.receiver, network)
-	run_nodes(BA_nodes, vm, technic.battery, network)
+	run_nodes(PR_nodes, technic.producer, network)
+	run_nodes(RE_nodes, technic.receiver, network)
+	run_nodes(BA_nodes, technic.battery, network)
 
 	-- Strings for the meta data
 	local eu_demand_str = network.tier.."_EU_demand"

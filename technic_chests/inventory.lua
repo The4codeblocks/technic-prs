@@ -20,7 +20,7 @@ function technic.chests.sort_inv(inv, mode)
 			if not stack:is_empty() then
 				local name = stack:get_name()
 				local wear = stack:get_wear()
-				local meta = stack:get_metadata()
+				local meta = stack:get_meta():get_string("")
 				local count = stack:get_count()
 				local def = minetest.registered_items[name]
 				local itemtype = (def and itemtypes[def.type]) and def.type or "none"
@@ -174,5 +174,20 @@ function technic.chests.log_inv_change(pos, name, change, items)
 		minetest.log("action", name.." puts "..items.." into chest at "..spos)
 	elseif change == "take" then
 		minetest.log("action", name.." takes "..items.." from chest at "..spos)
+	end
+end
+
+function technic.chests.log_fast_move(pos, name, change, items)
+	local spos = minetest.pos_to_string(pos)
+	local itemlist = {}
+	for _, stack in ipairs(items) do
+		table.insert(itemlist, stack.name.." "..stack.count)
+	end
+	if change == "put" then
+		minetest.log("action", string.format("%s puts items into chest at %s: %s",
+			name, spos, table.concat(itemlist, ", ")))
+	elseif change == "take" then
+		minetest.log("action", string.format("%s takes items from chest at %s: %s",
+			name, spos, table.concat(itemlist, ", ")))
 	end
 end

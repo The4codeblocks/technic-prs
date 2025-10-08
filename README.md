@@ -3,11 +3,10 @@ Technic
 
 A mod for [minetest](http://www.minetest.net)
 
-![integration-test](https://github.com/mt-mods/technic/workflows/integration-test/badge.svg)
-![luacheck](https://github.com/mt-mods/technic/workflows/luacheck/badge.svg)
-![mineunit](https://github.com/mt-mods/technic/workflows/mineunit/badge.svg)
-![mtinfo](https://github.com/mt-mods/technic/workflows/mtinfo/badge.svg)
-![](https://byob.yarr.is/mt-mods/technic/coverage)
+[![mtt](https://github.com/mt-mods/technic/actions/workflows/mtt.yml/badge.svg)](https://github.com/mt-mods/technic/actions/workflows/mtt.yml?query=branch%3Amaster)
+[![luacheck](https://github.com/mt-mods/technic/actions/workflows/luacheck.yml/badge.svg)](https://github.com/mt-mods/technic/actions/workflows/luacheck.yml?query=branch%3Amaster)
+[![mineunit](https://github.com/mt-mods/technic/actions/workflows/mineunit.yml/badge.svg)](https://github.com/mt-mods/technic/actions/workflows/mineunit.yml?query=branch%3Amaster)
+[![mineunit](https://byob.yarr.is/mt-mods/technic/coverage)](https://github.com/mt-mods/technic/actions/workflows/mineunit.yml?query=branch%3Amaster+is%3Asuccess)
 
 [![License](https://img.shields.io/badge/license-LGPLv2.0%2B-purple.svg)](https://www.gnu.org/licenses/old-licenses/lgpl-2.0.en.html)
 [![ContentDB](https://content.minetest.net/packages/mt-mods/technic_plus/shields/downloads/)](https://content.minetest.net/packages/mt-mods/technic_plus/)
@@ -39,7 +38,6 @@ their own manuals:
 * [Pipeworks Documentation](https://github.com/mt-mods/pipeworks/-/wikis/home)
 * [Moreores Forum Post](https://forum.minetest.net/viewtopic.php?t=549)
 * [Basic materials Repository](https://github.com/mt-mods/basic_materials)
-* [mtinfo generated documentation](https://mt-mods.github.io/technic/#/mods/technic/items)
 
 Recipes for constructable items in technic are generally not guessable,
 and are also not specifically documented here.  You should use a
@@ -98,11 +96,14 @@ Suitable for multiplayer environments.
 ## Compatibility
 
 This mod is meant as a **drop-in replacement** for the upstream `technic` mod.
+
 It also provides some additional machines and items, notably:
 
 * HV Grinder, Furnace, and Compressor
 * LV Lamp
 * LV, MV, and HV Digiline cables
+
+Note that the `wrench` mod has been separated from the modpack. It can now be found at [mt-mods/wrench](https://github.com/mt-mods/wrench).
 
 # Recommended mods
 
@@ -129,9 +130,7 @@ Recommended mods that build on the `technic mod`:
 | enable_mining_drill                          |                                                                                                                       |
 | enable_mining_laser                          |                                                                                                                       |
 | enable_flashlight                            |                                                                                                                       |
-| enable_wrench_crafting                       | enable recipe for wrench                                                                                              |
 | enable_wind_mill                             |                                                                                                                       |
-| enable_frames                                |                                                                                                                       |
 | enable_corium_griefing                       |                                                                                                                       |
 | enable_radiation_protection                  |                                                                                                                       |
 | enable_radiation_throttling                  | enable lag- and per-second-throttling of radiation damage                                                             |
@@ -141,7 +140,6 @@ Recommended mods that build on the `technic mod`:
 | admin_priv                                   | Privileges required to use administrative chat commands like cache flushing and enabling/disabling machines globally. |
 | quarry_max_depth                             | max depth of the quarry.                                                                                              |
 | quarry_time_limit                            | max cpu time in μs allowed per quarry step.                                                                           |
-| quarry_dig_above_nodes                       | begin digging this many nodes above quarry node.                                                                      |
 | quarry_dig_particles                         | Enables particle effect with the quarry digs a node.                                                                  |
 | network_overload_reset_time                  | After network conflict wait this many seconds before attempting to activate conflicting networks again.               |
 | switch_off_delay_seconds                     | switching station off delay.                                                                                          |

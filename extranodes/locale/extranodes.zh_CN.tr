@@ -1,9 +1,10 @@
 # textdomain: extranodes
 
-Marble=´óÀíÊ¯
-Marble Bricks=´óÀíÊ¯×©
-Granite=»¨¸ÚÑÒ
-Concrete=»ìÄıÍÁ
+Marble=å¤§ç†çŸ³
+Marble Bricks=å¤§ç†çŸ³ç –
+Granite=èŠ±å²—å²©
+Concrete=æ··å‡åœŸ
+Blast-resistant Concrete=
 Granite Bricks=
 Zinc Block=
 Cast Iron Block=
@@ -11,3 +12,5 @@ Carbon Steel Block=
 Stainless Steel Block=
 Insulator/cable clip=
 Steel strut with insulator/cable clip=
+Concrete Post Platform=æ··å‡åœŸæŸ±å¹³å°
+Concrete Post=æ··å‡åœŸæŸ±

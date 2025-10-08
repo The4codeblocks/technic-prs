@@ -1,5 +1,6 @@
 
 local S = technic.getter
+local mat = technic.materials
 
 -- handles the machine upgrades every tick
 function technic.handle_machine_upgrades(meta)
@@ -35,7 +36,7 @@ end
 -- handles the machine upgrades when set or removed
 local function on_machine_upgrade(meta, stack)
 	local stack_name = stack:get_name()
-	if stack_name == "default:chest" then
+	if stack_name == mat.chest then
 		meta:set_int("public", 1)
 		return 1
 	elseif stack_name ~= "technic:control_logic_unit"
@@ -47,7 +48,7 @@ end
 
 -- something is about to be removed
 local function on_machine_downgrade(meta, stack, list)
-	if stack:get_name() == "default:chest" then
+	if stack:get_name() == mat.chest then
 		local inv = meta:get_inventory()
 		local upg1, upg2 = inv:get_stack("upgrade1", 1), inv:get_stack("upgrade2", 1)
 
@@ -119,7 +120,7 @@ end
 function technic.machine_can_dig(pos, player)
 	local meta = minetest.get_meta(pos)
 	local inv = meta:get_inventory()
-	if not inv:is_empty("src") or not inv:is_empty("dst") then
+	if not inv:is_empty("src") or not inv:is_empty("dst") or not inv:is_empty("fuel") then
 		if player then
 			minetest.chat_send_player(player:get_player_name(),
 				S("Machine cannot be removed because it is not empty"))
@@ -188,4 +189,32 @@ function technic.machine_inventory_move(pos, from_list, from_index,
 		to_list, to_index, count, player)
 	local stack = minetest.get_meta(pos):get_inventory():get_stack(from_list, from_index)
 	return inv_change(pos, player, count, from_list, to_list, stack)
+end
+
+function technic.machine_on_inventory_put(pos, listname, index, stack, player)
+	minetest.log("action", string.format("%s puts %s into %s at %s",
+		player:get_player_name(),
+		stack:to_string(),
+		minetest.get_node(pos).name,
+		minetest.pos_to_string(pos)
+	))
+end
+
+function technic.machine_on_inventory_take(pos, listname, index, stack, player)
+	minetest.log("action", string.format("%s takes %s from %s at %s",
+		player:get_player_name(),
+		stack:to_string(),
+		minetest.get_node(pos).name,
+		minetest.pos_to_string(pos)
+	))
+end
+
+function technic.machine_on_inventory_move(pos, from_list, from_index, to_list, to_index, count, player)
+	local stack = minetest.get_meta(pos):get_inventory():get_stack(to_list, to_index)
+	minetest.log("action", string.format("%s moves %s in %s at %s",
+		player:get_player_name(),
+		stack:to_string(),
+		minetest.get_node(pos).name,
+		minetest.pos_to_string(pos)
+	))
 end

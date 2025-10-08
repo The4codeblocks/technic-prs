@@ -50,8 +50,8 @@ local run = function(pos, node)
 
 	meta:set_int("MV_EU_supply", eu_supply)
 
-	meta:set_string("infotext",
-	S("Hydro @1 Generator", S("MV")).." ("..production_level.."%)")
+	meta:set_string("infotext", S("@1 (@2% Efficiency)",
+		S("Hydro @1 Generator", S("MV")), production_level))
 	if production_level > 0 and
 		minetest.get_node(pos).name == "technic:hydro_turbine" then
 		technic.swap_node(pos, "technic:hydro_turbine_active")
@@ -75,9 +75,12 @@ minetest.register_node("technic:hydro_turbine", {
 	},
 	paramtype2 = "facedir",
 	groups = {snappy=2, choppy=2, oddly_breakable_by_hand=2,
-	technic_machine=1, technic_mv=1},
+		technic_machine=1, technic_mv=1, axey=2, handy=1},
+	is_ground_content = false,
+	_mcl_blast_resistance = 1,
+	_mcl_hardness = 0.8,
 	legacy_facedir_simple = true,
-	sounds = default.node_sound_wood_defaults(),
+	sounds = technic.sounds.node_sound_wood_defaults(),
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
 		meta:set_string("infotext", S("Hydro @1 Generator", S("MV")))
@@ -92,10 +95,13 @@ minetest.register_node("technic:hydro_turbine_active", {
 			"technic_hydro_turbine_side.png", "technic_hydro_turbine_side.png",
 			"technic_hydro_turbine_side.png", "technic_hydro_turbine_side.png"},
 	paramtype2 = "facedir",
-	groups = {snappy=2, choppy=2, oddly_breakable_by_hand=2,
-			technic_machine=1, technic_mv=1, not_in_creative_inventory=1},
+	groups = {snappy=2, choppy=2, oddly_breakable_by_hand=2, axey=2, handy=1,
+		technic_machine=1, technic_mv=1, not_in_creative_inventory=1},
+	is_ground_content = false,
+	_mcl_blast_resistance = 1,
+	_mcl_hardness = 0.8,
 	legacy_facedir_simple = true,
-	sounds = default.node_sound_wood_defaults(),
+	sounds = technic.sounds.node_sound_wood_defaults(),
 	drop = "technic:hydro_turbine",
 	technic_run = run,
 	technic_disabled_machine_name = "technic:hydro_turbine",
