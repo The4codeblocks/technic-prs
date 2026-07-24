@@ -224,10 +224,8 @@ function technic.register_base_machine(nodename, data)
 	end
 
 	local presumed_form_buttons = function(meta)
-		return fs_helpers.cycling_button(
-			meta,
-			pipeworks.button_base:gsub("%[0%,4%.3%;1%,0%.6", ("[%.2f,%.2f;%.2f,%.2f")
-				:format(margin_x, margin_y + machine_section_h - 0.5 + 0.1, 1, 0.5)),
+		return fs_helpers.cycling_button(meta,
+			("image_button[%.2f,%.2f;%.2f,%.2f"):format(margin_x, margin_y + machine_section_h - 0.5 + 0.1, 1, 0.5),
 			"splitstacks",
 			{
 				pipeworks.button_off,

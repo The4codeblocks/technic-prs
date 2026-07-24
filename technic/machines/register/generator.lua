@@ -76,17 +76,15 @@ table.insert(generator_formspec_base, "listring[current_player;main]")
 generator_formspec_base = table.concat(generator_formspec_base)
 
 local presumed_form_buttons = function(meta)
-	return fs_helpers.cycling_button(
-		meta,
-		pipeworks.button_base:gsub("%[0%,4%.3%;1%,0%.6", ("[%.2f,%.2f;%.2f,%.2f")
-			:format(margin_x, margin_y + machine_section_h - 0.5 + 0.1, 1, 0.5)),
-		"splitstacks",
-		{
-			pipeworks.button_off,
-			pipeworks.button_on
-		}
+	return fs_helpers.cycling_button(meta,
+			("image_button[%.2f,%.2f;%.2f,%.2f"):format(margin_x, margin_y + machine_section_h - 0.5 + 0.1, 1, 0.5),
+			"splitstacks",
+			{
+				pipeworks.button_off,
+				pipeworks.button_on
+			}
 	)..pipeworks.button_label:gsub("%[0%.9%,4%.31", ("[%.2f,%.2f")
-		:format(margin_x + 1, margin_y + machine_section_h - 0.25 + 0.1))
+			:format(margin_x + 1, margin_y + machine_section_h - 0.25 + 0.1))
 end
 
 local function update_generator_formspec(meta, desc, percent, form_buttons)
